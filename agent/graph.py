@@ -192,6 +192,10 @@ def fetch_drug_info(drug_name: str) -> dict:
 # =========================================================
 # 5. 노드 함수 정의
 # =========================================================
+# IoT 블롭 증분 처리용 캐시 (하루 단위로 누적, 처리한 블롭 재다운로드 방지)
+_iot_cache: dict = {"day_start": None, "watermark": None, "status": None}
+
+
 def monitor_iot_node(state: AgentState):
     user_message = state["messages"][0] if state["messages"] else ""
     if user_message and user_message.strip():
@@ -213,22 +217,32 @@ def monitor_iot_node(state: AgentState):
         else:
             start_time = now.replace(hour=4, minute=0, second=0, microsecond=0)
 
-        blobs = list(container_client.list_blobs())
-        relevant_blobs = [
-            b for b in blobs
-            if b.last_modified.astimezone(kst) >= start_time
-        ]
+        # 하루 경계(오늘 04시)가 바뀌면 누적 캐시 초기화
+        if _iot_cache["day_start"] != start_time:
+            _iot_cache.update({
+                "day_start": start_time,
+                "watermark": None,
+                "status": {
+                    "morning": False, "lunch": False,
+                    "evening": False, "bedtime": False,
+                    "weight_change": 0.0, "deviceId": "Unknown", "timestamp": ""
+                },
+            })
 
-        if not relevant_blobs:
-            return {**state, "iot_status": {}}
+        watermark = _iot_cache["watermark"]
+        aggregated_status = _iot_cache["status"]
 
-        aggregated_status = {
-            "morning": False, "lunch": False,
-            "evening": False, "bedtime": False,
-            "weight_change": 0.0, "deviceId": "Unknown", "timestamp": ""
-        }
+        # 오늘 데이터 중 아직 처리하지 않은(워터마크 이후) 블롭만 다운로드
+        new_blobs = sorted(
+            [
+                b for b in container_client.list_blobs()
+                if b.last_modified.astimezone(kst) >= start_time
+                and (watermark is None or b.last_modified > watermark)
+            ],
+            key=lambda x: x.last_modified,
+        )
 
-        for blob_info in sorted(relevant_blobs, key=lambda x: x.last_modified):
+        for blob_info in new_blobs:
             try:
                 blob_client = container_client.get_blob_client(blob_info)
                 content_str = blob_client.download_blob().readall().decode('utf-8')
@@ -270,6 +284,14 @@ def monitor_iot_node(state: AgentState):
             except Exception as err:
                 logger.warning(f"Blob 파일 해석 오류 (무시): {err}")
                 continue
+
+        # 처리한 블롭까지 워터마크 갱신 (다음 호출부터 재다운로드 방지)
+        if new_blobs:
+            _iot_cache["watermark"] = new_blobs[-1].last_modified
+
+        # 오늘 아직 유효한 데이터가 없으면 빈 상태 반환
+        if not aggregated_status.get("timestamp"):
+            return {**state, "iot_status": {}}
 
         try:
             validated_data = MedicationData(**aggregated_status)
