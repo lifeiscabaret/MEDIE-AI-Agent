@@ -354,8 +354,9 @@ def classify_intent_node(state: AgentState):
         last_confirmed = state.get("last_confirmed_timestamp", "")
         is_recent = False
         try:
-            iot_time = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
-            diff = (datetime.now() - iot_time).total_seconds()
+            kst = timezone(timedelta(hours=9))
+            iot_time = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S').replace(tzinfo=kst)
+            diff = (datetime.now(kst) - iot_time).total_seconds()
             is_recent = diff < 300
         except Exception:
             is_recent = False
