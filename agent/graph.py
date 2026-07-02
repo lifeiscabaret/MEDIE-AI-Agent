@@ -367,6 +367,10 @@ def classify_intent_node(state: AgentState):
         else:
             logger.debug("IoT 무시: 오래된 데이터이거나 이미 확인한 데이터")
 
+    if not user_message or not user_message.strip():
+        logger.debug("빈 메시지 → LLM 분류 스킵 (CHAT)")
+        return {**state, "intent": "CHAT"}
+
     classify_messages = [
         SystemMessage(content="""사용자 메시지를 보고 의도를 분류하세요.
 - NAVIGATE: 화면 이동 요청 (약국, 스캔, 내 약, 알람, 마이페이지, 커뮤니티, 히스토리 등)
