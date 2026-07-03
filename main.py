@@ -41,7 +41,9 @@ app = FastAPI(title="Medie AI Agent", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    # allow_origins=["*"] 와 allow_credentials=True 는 스펙상 함께 쓸 수 없음
+    # (브라우저가 거부). 인증 쿠키를 쓰지 않으므로 False 로 둔다.
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
