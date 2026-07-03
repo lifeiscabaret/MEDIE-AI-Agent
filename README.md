@@ -1,8 +1,28 @@
+<div align="center">
+
+<img src="assets/maddy-logo.png" alt="Maddy" width="160" />
+
 # medie-ai-agent
 
-복약 관리 앱 **MedicHubs**의 AI 에이전트 **매디(Maddy)** 백엔드입니다.
-사용자의 복약을 돕고, 음성/채팅으로 앱 기능을 제어하며, IoT 약통 데이터를 실시간으로 모니터링합니다.
+복약 관리 앱 **MedicHubs**의 AI 에이전트 **매디(Maddy)** 백엔드
 
+<br/>
+
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![LangChain](https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white)
+![LangGraph](https://img.shields.io/badge/LangGraph-FF6F61?style=for-the-badge&logo=langgraph&logoColor=white)
+![Pydantic](https://img.shields.io/badge/Pydantic-E92063?style=for-the-badge&logo=pydantic&logoColor=white)
+
+![Azure OpenAI](https://img.shields.io/badge/Azure%20OpenAI-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)
+![Azure Blob](https://img.shields.io/badge/Blob%20Storage-0089D6?style=for-the-badge&logo=microsoftazure&logoColor=white)
+![Azure Cosmos DB](https://img.shields.io/badge/Cosmos%20DB-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)
+![ChromaDB](https://img.shields.io/badge/ChromaDB-FFB000?style=for-the-badge&logoColor=white)
+![ElevenLabs](https://img.shields.io/badge/ElevenLabs-000000?style=for-the-badge&logo=elevenlabs&logoColor=white)
+
+</div>
+
+사용자의 복약을 돕고, 음성/채팅으로 앱 기능을 제어하며, IoT 약통 데이터를 실시간으로 모니터링합니다.
 FastAPI + LangGraph 기반이며, Azure OpenAI를 LLM으로 사용합니다.
 
 ## 주요 기능
