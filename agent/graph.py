@@ -915,13 +915,14 @@ def get_medie_response(
     current_mode: str,
     pill_history: Optional[list] = None,
     chat_history: Optional[list] = None,
-    last_confirmed_timestamp: str = ""
+    last_confirmed_timestamp: str = "",
+    user_id: Optional[str] = None,
 ) -> dict:
     pill_history = pill_history or []
     chat_history = chat_history or []
 
     initial_state = {
-        "user_id": settings.default_user_id,
+        "user_id": user_id or settings.default_user_id,
         "device_id": "Unknown",
         "iot_status": {},
         "schedule": [],

@@ -185,7 +185,8 @@ async def chat_endpoint(req: ChatRequest):
             req.current_mode,
             req.pill_history,
             req.chat_history,
-            req.last_confirmed_timestamp
+            req.last_confirmed_timestamp,
+            req.user_id,
         )
 
         if result.get("command") == "SET_ALARM":
