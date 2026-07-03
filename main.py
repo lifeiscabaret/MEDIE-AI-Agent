@@ -41,7 +41,9 @@ app = FastAPI(title="Medie AI Agent", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    # allow_origins=["*"] 와 allow_credentials=True 는 스펙상 함께 쓸 수 없음
+    # (브라우저가 거부). 인증 쿠키를 쓰지 않으므로 False 로 둔다.
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -74,7 +76,7 @@ def send_expo_push(user_id: str, title: str, body: str) -> None:
 def background_monitoring() -> None:
     logger.info("실시간 IoT 확인 스레드 시작")
     last_processed_time = ""
-    last_alarm_sent = ""
+    sent_alarm_keys: set[str] = set()
 
     initial_state = {
         "user_id": "SYSTEM_MONITOR",
@@ -103,14 +105,14 @@ def background_monitoring() -> None:
 
             for user_id, alarm_time in alarm_times.items():
                 alarm_key = f"{user_id}_{alarm_time}_{now.strftime('%Y-%m-%d')}"
-                if current_time == alarm_time and alarm_key != last_alarm_sent:
+                if current_time == alarm_time and alarm_key not in sent_alarm_keys:
                     logger.info(f"복약 시간 알림: {user_id}")
                     send_expo_push(
                         user_id,
                         "💊 복약 시간이에요!",
                         "매디가 알려드려요. 지금 약 드실 시간이에요!"
                     )
-                    last_alarm_sent = alarm_key
+                    sent_alarm_keys.add(alarm_key)
 
             final_state = medie_graph.invoke(initial_state)
             iot_data = final_state.get("iot_status", {})
@@ -185,7 +187,8 @@ async def chat_endpoint(req: ChatRequest):
             req.current_mode,
             req.pill_history,
             req.chat_history,
-            req.last_confirmed_timestamp
+            req.last_confirmed_timestamp,
+            req.user_id,
         )
 
         if result.get("command") == "SET_ALARM":
