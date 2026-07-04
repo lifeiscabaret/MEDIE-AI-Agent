@@ -26,6 +26,13 @@
 
 > **이 저장소는 MEDI 프로젝트의 AI 에이전트 백엔드입니다.** 음성 입력(STT)은 React Native 클라이언트에서 텍스트로 변환되어 `/chat`으로 전달되며, IoT 약통 펌웨어·모바일 앱·연동 백엔드(`/arduino`, `/boards`)는 별도 저장소로 구성됩니다.
 
+## 연계 레포
+
+| 레포 | 설명 |
+|---|---|
+| [MEDI App (팀 프로젝트 전체)](https://github.com/CareFlowTeam/MEDIE) | React Native 앱, 팀 구성·역할 분담 확인 가능 |
+| MEDI Agent Server (현재 레포) | LangGraph Agent·FastAPI·RAG 파이프라인 (내 담당) |
+
 사용자의 복약을 돕고, 음성/채팅으로 앱 기능을 제어하며, IoT 약통 데이터를 실시간으로 모니터링합니다.
 FastAPI + LangGraph 기반이며, Azure OpenAI를 LLM으로 사용합니다.
 
@@ -202,6 +209,18 @@ python -m agent.monitoring
 
 `main` 브랜치에 push하면 GitHub Actions(`.github/workflows/main_medie-agent-final.yml`)가
 Azure Web App **medie-agent-final**(Production 슬롯)로 자동 배포합니다.
+
+## 팀 구성 및 기술 분담 (Team)
+
+> 팀 프로젝트 [CareFlowTeam/MEDIE](https://github.com/CareFlowTeam/MEDIE) 기준.
+
+| 이름 | 역할 | 담당 |
+|------|------|------|
+| 조태민 | Team Leader | Arduino SW 아키텍처 설계 및 펌웨어 프로그래밍 |
+| 배권혁 | PM / DevOps | Backend API 개발 · 클라우드 인프라 구축 |
+| 김건 | Hardware | Arduino HW 회로 설계 · 물리 프로토타입 제작 |
+| 이지현 | AI / UI | AI Agent 구현 · 서비스 기획 · UI/UX 설계 및 개발 |
+| 김택수 | Data | 데이터 라벨링 · 모델 학습 최적화 |
 
 ## 라이선스
 
